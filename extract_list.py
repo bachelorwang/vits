@@ -2,6 +2,9 @@ import os
 import argparse
 import random
 import common
+import phonemizer
+import re
+import pyopenjtalk
 
 parser = argparse.ArgumentParser()
 
@@ -11,6 +14,11 @@ parser.add_argument("--min_len", type=int, default=4)
 parser.add_argument("--min_set", type=int, default=4)
 
 args = parser.parse_args()
+
+_whitespace_re = re.compile(r'\s+')
+
+def collapse_whitespace(text):
+  return re.sub(_whitespace_re, ' ', text)
 
 all_list_path = common.get_all_list_path(args)
 with open('filelists/train_%s.txt' % args.model, 'w', encoding='utf-8') as train_list_file, \
