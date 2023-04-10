@@ -1,7 +1,7 @@
 import os
 import argparse
 import whisper
-import common
+import filelist
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, required=True)
@@ -12,11 +12,11 @@ model = whisper.load_model("large")
 
 def process(file):
     options = whisper.DecodingOptions(language=args.lang, without_timestamps=True)
-    for _, _, filenames in os.walk(common.AUDIO_PATH):
+    for _, _, filenames in os.walk(path.AUDIO_PATH):
         for filename in filenames:
             if not filename.endswith('.wav'):
                 continue
-            path = common.AUDIO_PATH + '/' + filename
+            path = path.AUDIO_PATH + '/' + filename
             print('processing %s' % path)
             audio = whisper.load_audio(path)
             audio = whisper.pad_or_trim(audio)
@@ -26,6 +26,6 @@ def process(file):
             file.flush()
 
 
-all_list_path = common.get_all_list_path(args)
+all_list_path = filelist.get_all_list_path(args)
 with open(all_list_path, 'w', encoding='utf-8') as file:
     process(file)

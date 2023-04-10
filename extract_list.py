@@ -1,10 +1,8 @@
 import os
 import argparse
 import random
-import common
-import phonemizer
+import filelist
 import re
-import pyopenjtalk
 
 parser = argparse.ArgumentParser()
 
@@ -20,18 +18,18 @@ _whitespace_re = re.compile(r'\s+')
 def collapse_whitespace(text):
   return re.sub(_whitespace_re, ' ', text)
 
-all_list_path = common.get_all_list_path(args)
+all_list_path = filelist.get_all_list_path(args)
 with open('filelists/train_%s.txt' % args.model, 'w', encoding='utf-8') as train_list_file, \
      open('filelists/val_%s.txt' % args.model, 'w', encoding='utf-8') as val_list_file, \
      open(all_list_path, 'r', encoding='utf-8') as all_list_file:
-    strs = [(path, idx, line.strip()) for path, idx, line in map(lambda s: s.split('|'), all_list_file.readlines())]
-    strs = sorted(strs, key=lambda x: x[2])
+    strs = [(path, line.strip()) for path, line in map(lambda s: s.split('|'), all_list_file.readlines())]
+    strs = sorted(strs, key=lambda x: x[1])
     filtered = []
-    for f, i, l in strs:
+    for f, l in strs:
         if len(l) < args.min_len or len(set(l)) < args.min_set:
             print('filtered out: %s:%s' % (f, l))
             continue
-        filtered.append('%s|%s|%s\n' % (f, i, l))
+        filtered.append('%s|%s\n' % (f, l))
     strs = filtered
     cnt = len(strs)
     random.shuffle(strs)

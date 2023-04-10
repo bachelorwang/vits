@@ -167,6 +167,7 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
 
 SYMBOL_TO_JAPANESE = [(re.compile('%s' % x[0]), x[1]) for x in [
     ('％', 'パーセント')
+    ('%', 'パーセント')
 ]]
 
 JAPANESE_CHARACTERS = re.compile(
