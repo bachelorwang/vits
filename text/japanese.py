@@ -5,7 +5,9 @@ import pyopenjtalk
 
 SYMBOL_TO_JAPANESE = [(re.compile('%s' % x[0]), x[1]) for x in [
     ('％', 'パーセント'),
-    ('%', 'パーセント')
+    ('%', 'パーセント'),
+    (r'\.{2,}', ' '),
+    (r'\u2026+', ' '),
 ]]
 
 OJT_PHONEME_TO_IPA = {

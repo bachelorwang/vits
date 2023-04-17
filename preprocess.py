@@ -8,7 +8,6 @@ if __name__ == '__main__':
   parser.add_argument("--text_index", default=1, type=int)
   parser.add_argument("--filelists", nargs="+", default=[])
   parser.add_argument("--text_cleaners", nargs="+", default=[])
-  parser.add_argument("--verbose", type=bool, default=False)
 
   args = parser.parse_args()
 
