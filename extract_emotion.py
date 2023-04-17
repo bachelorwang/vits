@@ -11,6 +11,7 @@ from transformers.models.wav2vec2.modeling_wav2vec2 import (
     Wav2Vec2PreTrainedModel,
 )
 
+
 class RegressionHead(nn.Module):
     r"""Classification head."""
 
@@ -55,12 +56,14 @@ class EmotionModel(Wav2Vec2PreTrainedModel):
 
         return hidden_states, logits
 
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = 'audeering/wav2vec2-large-robust-12-ft-emotion-msp-dim'
 processor = Wav2Vec2Processor.from_pretrained(model_name)
 model = EmotionModel.from_pretrained(model_name).to(device)
 
 print('device: %s' % device)
+
 
 def process_func(
     x: np.ndarray,
@@ -85,12 +88,14 @@ def process_func(
 
     return y
 
+
 def extract(path):
     print(path)
     wav, sr = librosa.load(path, sr=16000)
     emb = process_func(np.expand_dims(wav, 0), sr, embeddings=True)
     np.save(f"{path}.emo.npy", emb.squeeze(0))
     return emb
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -104,6 +109,7 @@ if __name__ == '__main__':
 
     for filelist in args.filelists:
         with open(filelist, 'r', encoding='utf-8') as file:
-            paths = [data[args.audio_index] for data in map(lambda s: s.split('|'), file.readlines())]
+            paths = [data[args.audio_index]
+                     for data in map(lambda s: s.split('|'), file.readlines())]
             for p in paths:
                 extract(p)
