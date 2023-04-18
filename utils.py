@@ -35,17 +35,16 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
             logger.info("%s is not in the checkpoint" % k)
             new_state_dict[k] = v
     if hasattr(model, 'module'):
-        model.module.load_state_dict(new_state_dict)
+        model.module.load_state_dict(new_state_dict, strict=False)
     else:
-        model.load_state_dict(new_state_dict)
+        model.load_state_dict(new_state_dict, strict=False)
     logger.info("Loaded checkpoint '{}' (iteration {})" .format(
         checkpoint_path, iteration))
     return model, optimizer, learning_rate, iteration
 
 
 def save_checkpoint(model, optimizer, learning_rate, iteration, checkpoint_path):
-    logger.info("Saving model and optimizer state at iteration {} to {}".format(
-        iteration, checkpoint_path))
+    logger.info(f"Saving model and optimizer state at iteration {iteration} to {checkpoint_path}")
     if hasattr(model, 'module'):
         state_dict = model.module.state_dict()
     else:
@@ -71,7 +70,6 @@ def latest_checkpoint_path(dir_path, regex="G_*.pth"):
     f_list = glob.glob(os.path.join(dir_path, regex))
     f_list.sort(key=lambda f: int("".join(filter(str.isdigit, f))))
     x = f_list[-1]
-    print(x)
     return x
 
 
@@ -82,7 +80,7 @@ def plot_spectrogram_to_numpy(spectrogram):
         matplotlib.use("Agg")
         MATPLOTLIB_FLAG = True
         mpl_logger = logging.getLogger('matplotlib')
-        mpl_logger.setLevel(logging.WARNING)
+        mpl_logger.setLevel(logging.INFO)
     import matplotlib.pylab as plt
     import numpy as np
 
@@ -108,7 +106,7 @@ def plot_alignment_to_numpy(alignment, info=None):
         matplotlib.use("Agg")
         MATPLOTLIB_FLAG = True
         mpl_logger = logging.getLogger('matplotlib')
-        mpl_logger.setLevel(logging.WARNING)
+        mpl_logger.setLevel(logging.INFO)
     import matplotlib.pylab as plt
     import numpy as np
 
@@ -144,6 +142,7 @@ def load_filepaths_and_text(filename, split="|"):
 def get_hparams(init=True):
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, required=True, help='Model name')
+    parser.add_argument('--backup_dir', type=str)
 
     args = parser.parse_args()
     model_dir = os.path.join("./logs", args.model)
@@ -165,17 +164,7 @@ def get_hparams(init=True):
 
     hparams = HParams(**config)
     hparams.model_dir = model_dir
-    return hparams
-
-
-def get_hparams_from_dir(model_dir):
-    config_save_path = os.path.join(model_dir, "config.json")
-    with open(config_save_path, "r") as f:
-        data = f.read()
-    config = json.loads(data)
-
-    hparams = HParams(**config)
-    hparams.model_dir = model_dir
+    hparams.backup_dir = args.backup_dir 
     return hparams
 
 

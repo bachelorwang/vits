@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import librosa
+import filelist
 from transformers import Wav2Vec2Processor
 from transformers.models.wav2vec2.modeling_wav2vec2 import (
     Wav2Vec2Model,
@@ -93,7 +94,7 @@ def extract(path):
     print(path)
     wav, sr = librosa.load(path, sr=16000)
     emb = process_func(np.expand_dims(wav, 0), sr, embeddings=True)
-    np.save(f"{path}.emo.npy", emb.squeeze(0))
+    np.save(filelist.get_emo_filepath(path), emb.squeeze(0))
     return emb
 
 

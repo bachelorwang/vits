@@ -1,13 +1,11 @@
 import re
 from unidecode import unidecode
-from phonemizer import phonemize
+from text.symbols import symbols
 import pyopenjtalk
 
 SYMBOL_TO_JAPANESE = [(re.compile('%s' % x[0]), x[1]) for x in [
     ('％', 'パーセント'),
     ('%', 'パーセント'),
-    (r'\.{2,}', ' '),
-    (r'\u2026+', ' '),
 ]]
 
 OJT_PHONEME_TO_IPA = {
@@ -83,6 +81,15 @@ def normalize_japanese_text(text):
         text = re.sub(regex, replacement, text)
     return text
 
+SYMBOLS = set(symbols)
+
+def remove_invalid_characters(text):
+    cleaned = ''
+    for c in text:
+        if c not in SYMBOLS:
+            continue
+        cleaned += c
+    return cleaned
 
 def japanese_cleaners(text):
     text = normalize_japanese_text(text)
@@ -94,9 +101,14 @@ def japanese_cleaners(text):
             if text:
                 text += ' '
             symbols = pyopenjtalk.extract_fullcontext(part)
-            text += pp_symbols(symbols)
+            symbols = pp_symbols(symbols)
+            text += symbols
         if i < len(marks):
-            text += unidecode(marks[i]).strip()
+            if marks[i] in SYMBOLS:
+                text += marks[i]
+            else:
+                text += unidecode(marks[i]).strip()
     if re.match('[A-Za-z]', text[-1]):
         text += '.'
+    text = remove_invalid_characters(text)
     return text

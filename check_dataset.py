@@ -22,7 +22,7 @@ def check_list(list_path, args):
                     audio_path, cleaned_list[i][args.audio_index]))
             if not os.path.isfile(audio_path):
                 errors.append('audio path %s doesn\' exist' % audio_path)
-            emopath = audio_path + '.' + args.emo_extension
+            emopath = filelist.get_emo_filepath(audio_path)
             if not os.path.isfile(emopath):
                 errors.append('emo path %s doesn\' exist' % emopath)
         return errors
@@ -34,7 +34,6 @@ if __name__ == '__main__':
     parser.add_argument("--audio_index", default=0, type=int)
     parser.add_argument("--model", type=str, required=True)
     parser.add_argument("--cleaned_extension", type=str, default="cleaned")
-    parser.add_argument("--emo_extension", type=str, default="emo.npy")
 
     args = parser.parse_args()
 

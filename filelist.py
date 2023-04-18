@@ -8,3 +8,6 @@ def get_train_list_path(args):
 
 def get_val_list_path(args):
     return 'filelists/val_%s.txt' % args.model
+
+def get_emo_filepath(path):
+    return path + '.emo.npy'

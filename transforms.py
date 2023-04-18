@@ -146,8 +146,7 @@ def rational_quadratic_spline(inputs,
     input_delta = delta.gather(-1, bin_idx)[..., 0]
 
     input_derivatives = derivatives.gather(-1, bin_idx)[..., 0]
-    input_derivatives_plus_one = derivatives[...,
-                                             1:].gather(-1, bin_idx)[..., 0]
+    input_derivatives_plus_one = derivatives[..., 1:].gather(-1, bin_idx)[..., 0]
 
     input_heights = heights.gather(-1, bin_idx)[..., 0]
 
@@ -174,16 +173,14 @@ def rational_quadratic_spline(inputs,
         derivative_numerator = input_delta.pow(2) * (input_derivatives_plus_one * root.pow(2)
                                                      + 2 * input_delta * theta_one_minus_theta
                                                      + input_derivatives * (1 - root).pow(2))
-        logabsdet = torch.log(derivative_numerator) - \
-            2 * torch.log(denominator)
+        logabsdet = torch.log(derivative_numerator) - 2 * torch.log(denominator)
 
         return outputs, -logabsdet
     else:
         theta = (inputs - input_cumwidths) / input_bin_widths
         theta_one_minus_theta = theta * (1 - theta)
 
-        numerator = input_heights * (input_delta * theta.pow(2)
-                                     + input_derivatives * theta_one_minus_theta)
+        numerator = input_heights * (input_delta * theta.pow(2) + input_derivatives * theta_one_minus_theta)
         denominator = input_delta + ((input_derivatives + input_derivatives_plus_one - 2 * input_delta)
                                      * theta_one_minus_theta)
         outputs = input_cumheights + numerator / denominator
@@ -191,7 +188,6 @@ def rational_quadratic_spline(inputs,
         derivative_numerator = input_delta.pow(2) * (input_derivatives_plus_one * theta.pow(2)
                                                      + 2 * input_delta * theta_one_minus_theta
                                                      + input_derivatives * (1 - theta).pow(2))
-        logabsdet = torch.log(derivative_numerator) - \
-            2 * torch.log(denominator)
+        logabsdet = torch.log(derivative_numerator) - 2 * torch.log(denominator)
 
         return outputs, logabsdet
